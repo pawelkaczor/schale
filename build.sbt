@@ -1,19 +1,25 @@
-import AssemblyKeys._
-
-assemblySettings
+import sbtrelease.ReleasePlugin._
 
 name := "schale"
 
-version := "1.0"
+organization := "pl.newicom"
 
-scalaVersion := "2.10.2"
+version := "1.0.1"
+
+scalaVersion := "2.11.7"
+
+licenses := ("Apache2", new java.net.URL("http://github.com/pawelkaczor/schale/blob/master/LICENSE")) :: Nil
+
+homepage := Some(new java.net.URL("http://github.com/pawelkaczor/schale"))
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
-libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.0"
+publishMavenStyle := true
 
-libraryDependencies += "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"
+libraryDependencies ++= Seq(
+	"com.typesafe.akka" %% "akka-actor" % "2.4-M1",
+	"org.scalatest" %% "scalatest" % "2.2.4" % "test"
+)
 
-jarName in assembly := "schale.jar"
 
-test in assembly := {}
+Publish.settings ++ releaseSettings

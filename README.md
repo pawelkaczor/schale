@@ -83,13 +83,6 @@ Process `.destroy()` can be used any time to destory a process before its comple
 
 Start from a `new Env()` object, use `cd()` to change directory and `env()` to add/override variables, __stack__ those calls to easily manage hierarchical process environment!
 
-## Installation
-`schale` currently uses [sbt-assembly](https://github.com/sbt/sbt-assembly)
-to produce a fat jar.
-First, verify `build.sbt` contains the same libraries as
-the codebase to integrate with.
-Next, run `sbt assembly` to create `target/scala-X.XX/schale.jar`.
-
 ## Some notes
 
 __Is `Shell()` cross platform?__
@@ -118,6 +111,12 @@ JVM cannot interact with TTY and Schale itself is not a terminal emulator, there
   <td>alpha</td>
   <td>2013-08-10</td>
   <td>First release</td>
+</tr>
+<tr>
+  <td>1.0.1</td>
+  <td> </td>
+  <td>2015-07-24</td>
+  <td>forked by Pawel Kaczor</td>
 </tr>
 </table>
 
