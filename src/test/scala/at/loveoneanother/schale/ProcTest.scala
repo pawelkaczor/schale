@@ -23,7 +23,7 @@ import at.loveoneanother.schale.Shell
 
 class ProcTest extends FunSuite {
   test("run process and use exit status") {
-    expectResult(0) { Command("echo", "a").waitFor() }
+    assertResult(0) { Command("echo", "a").waitFor() }
   }
 
   test("run process without IO") {
@@ -34,59 +34,59 @@ class ProcTest extends FunSuite {
   }
 
   test("single command and collect stdout/stderr") {
-    expectResult("a") { Command("echo", "a").toString() }
+    assertResult("a") { Command("echo", "a").toString() }
   }
 
   test("consume stdout") {
     for (line <- Command("echo", "a").stdout)
-      expectResult("a") { line }
+      assertResult("a") { line }
   }
 
   test("consume stderr") {
     for (line <- Command("echo", "a").stderr)
-      expectResult("") { line }
+      assertResult("") { line }
   }
 
   test("consume stdout and stderr") {
     for (line <- Command("echo", "a"))
-      expectResult("a") { line }
+      assertResult("a") { line }
   }
 
   test("feed to stdin") {
-    expectResult(String.format("a%nb")) {
+    assertResult(String.format("a%nb")) {
       (Command("cat").input(String.format("a%n"), String.format("b%n"))).toString()
     }
   }
 
   test("feed to stdin and consume stdout/stderr") {
     for (line <- Command("cat").input("a"))
-      expectResult("a") { line }
+      assertResult("a") { line }
   }
 
   test("interpret and collect stdout/stderr") {
-    expectResult(String.format("a")) {
+    assertResult(String.format("a")) {
       Shell("echo a").toString()
     }
   }
 
   test("interpret using other interpreter") {
-    expectResult(String.format("a")) {
+    assertResult(String.format("a")) {
       Shell("echo a", "/bin/ksh").toString()
     }
   }
 
   test("interpret and feed to stdin, then consume stdout/stderr") {
     for (line <- Shell("cat").input("a")) {
-      expectResult("a") { line }
+      assertResult("a") { line }
     }
   }
 
   test("interpret and use exit status") {
     val interpreter = Shell("cat").input("a")
     for (line <- interpreter) {
-      expectResult("a") { line }
+      assertResult("a") { line }
     }
-    expectResult(0) { interpreter.waitFor() }
+    assertResult(0) { interpreter.waitFor() }
   }
 
   test("destroy process") {
@@ -95,38 +95,38 @@ class ProcTest extends FunSuite {
       proc.destroy()
     }
     proc.bg()
-    expectResult(143) { proc.destroy() }
+    assertResult(143) { proc.destroy() }
   }
 
   test("run in specified cwd") {
     new Env(pwd = "/") {
-      expectResult("/") { Command("pwd").toString }
-      expectResult("/") { Shell("pwd").toString }
+      assertResult("/") { Command("pwd").toString }
+      assertResult("/") { Shell("pwd").toString }
     }
   }
 
   test("run in specified environment") {
     new Env(Map("newvar" -> "a")) {
-      expectResult("a") { Shell("echo $newvar").toString }
+      assertResult("a") { Shell("echo $newvar").toString }
     }
   }
 
   test("combine both env and pwd") {
     new Env(Map("newvar" -> "a")) {
-      expectResult("a") { Shell("echo $newvar").toString }
+      assertResult("a") { Shell("echo $newvar").toString }
       cd("/") {
-        expectResult("a") { Shell("echo $newvar").toString }
-        expectResult("/") { Command("pwd").toString }
+        assertResult("a") { Shell("echo $newvar").toString }
+        assertResult("/") { Command("pwd").toString }
       }
       cd("/tmp") {
-        expectResult("a") { Shell("echo $newvar").toString }
-        expectResult("/tmp") { Command("pwd").toString }
+        assertResult("a") { Shell("echo $newvar").toString }
+        assertResult("/tmp") { Command("pwd").toString }
         env(Map("newvar2" -> "b")) {
-          expectResult("/tmp") { Command("pwd").toString }
+          assertResult("/tmp") { Command("pwd").toString }
           cd("/") {
-            expectResult("a") { Shell("echo $newvar").toString }
-            expectResult("b") { Shell("echo $newvar2").toString }
-            expectResult("/") { Command("pwd").toString }
+            assertResult("a") { Shell("echo $newvar").toString }
+            assertResult("b") { Shell("echo $newvar2").toString }
+            assertResult("/") { Command("pwd").toString }
           }
         }
       }
@@ -146,8 +146,8 @@ class ProcTest extends FunSuite {
       val future = io ? ProcStdoutReadLine
       future onComplete {
         case Success(line) => {
-          expectResult("a") { line }
-          expectResult(0) { proc.waitFor() }
+          assertResult("a") { line }
+          assertResult(0) { proc.waitFor() }
         }
         case Failure(e) =>
           ProcTest.this.fail("cannot read proc output")
@@ -169,8 +169,8 @@ class ProcTest extends FunSuite {
       val future = io ? ProcStderrReadChar
       future onComplete {
         case Success(char) => {
-          expectResult('a') { char }
-          expectResult(0) { proc.waitFor() }
+          assertResult('a') { char }
+          assertResult(0) { proc.waitFor() }
         }
         case Failure(e) =>
           ProcTest.this.fail("cannot read proc output")
@@ -182,6 +182,6 @@ class ProcTest extends FunSuite {
   test("IO redirect to file using shell") {
     new java.io.File("/tmp/schale_test").delete()
     Shell("echo a | grep a > /tmp/schale_test").waitFor()
-    expectResult(true) { new java.io.File("/tmp/schale_test").exists() }
+    assertResult(true) { new java.io.File("/tmp/schale_test").exists() }
   }
 }
